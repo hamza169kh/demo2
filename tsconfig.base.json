@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "strict": true,
+    "skipLibCheck": true,
+    "noImplicitAny": true,
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@ramadan/types": ["packages/types/src"],
+      "@ramadan/shared": ["packages/shared/src"],
+      "@ramadan/utils": ["packages/utils/src"]
+    }
+  }
+}
