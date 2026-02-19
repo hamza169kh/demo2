@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model QuranAyah {
+  id          String   @id @default(uuid()) @db.Uuid
+  surah       Int
+  ayah        Int
+  page        Int
+  juz         Int
+  hizb        Int
+  textUthmani String   @map("text_uthmani") @db.Text
+  textSimple  String   @map("text_simple") @db.Text
+  tafsirTexts TafsirText[]
+
+  @@map("quran_ayah")
+  @@unique([surah, ayah])
+}
+
+model TafsirText {
+  id         String   @id @default(uuid()) @db.Uuid
+  ayahId     String   @map("ayah_id") @db.Uuid
+  sourceKey  String   @map("source_key")
+  sourceName String   @map("source_name")
+  text       String   @db.Text
+  language   String
+  ayah       QuranAyah @relation(fields: [ayahId], references: [id])
+
+  @@map("tafsir_text")
+  @@index([ayahId, sourceKey])
+}
+
+model Hadith {
+  id        String   @id @default(uuid()) @db.Uuid
+  source    String
+  reference String
+  grade     String
+  text      String   @db.Text
+  language  String
+  tags      String[]
+
+  @@map("hadith")
+}
+
+model ReadingProgress {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  date      DateTime @db.Date
+  ayahStart Int      @map("ayah_start")
+  ayahEnd   Int      @map("ayah_end")
+  pagesRead Int      @map("pages_read")
+
+  @@map("reading_progress")
+  @@index([userId, date])
+}
+
+model PrayerPreference {
+  id               String @id @default(uuid()) @db.Uuid
+  userId           String @map("user_id") @db.Uuid
+  method           String
+  asrMethod        String @map("asr_method")
+  highLatitudeRule String @map("high_latitude_rule")
+  adhanEnabled     Boolean @default(true) @map("adhan_enabled")
+
+  @@map("prayer_preference")
+  @@unique([userId])
+}
+
+model RagDocument {
+  id          String @id @default(uuid()) @db.Uuid
+  documentType String @map("document_type")
+  source      String
+  reference   String
+  content     String @db.Text
+  embedding   Unsupported("vector")
+
+  @@map("rag_document")
+}
